@@ -25,7 +25,7 @@ function App() {
       })
       .catch((err) => {
         console.warn(err);
-        alert('Не удалось получить информацию с сервера!');
+        alert('Не удалось получить информацию с сервера - с сайта https://cdn.cur.su/api');
       });
   }, []);
 
@@ -53,18 +53,8 @@ function App() {
     <div className="App">
       <h1 className="title">Конвертер валют</h1>
       <div className="row">
-        <Block
-          value={fromPrice}
-          currency={fromCurrency}
-          onChangeCurrency={setFromCurrency}
-          onChangeValue={onChangeFromPrice}
-        />
-        <Block
-          value={toPrice}
-          currency={toCurrency}
-          onChangeCurrency={setToCurrency}
-          onChangeValue={onChangeToPrice}
-        />
+        <Block value={fromPrice} currency={fromCurrency} onChangeCurrency={setFromCurrency} onChangeValue={onChangeFromPrice} />
+        <Block value={toPrice} currency={toCurrency} onChangeCurrency={setToCurrency} onChangeValue={onChangeToPrice} />
       </div>
     </div>
   );
