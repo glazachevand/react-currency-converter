@@ -1,9 +1,10 @@
 import React from 'react';
 import { Block } from './Block';
+import beginData from './data.json';
 import './index.scss';
 
-// API: https://cdn.cur.su/api/
-// Запрос: https://cdn.cur.su/api/latest.json
+// API: https://www.cbr-xml-daily.ru/latest.js или https://cdn.cur.su/api/latest.json
+
 function App() {
   // названия валют
   const [fromCurrency, setFromCurrency] = React.useState('USD');
@@ -14,31 +15,33 @@ function App() {
   const [toPrice, setToPrice] = React.useState(0);
 
   // курсы валют
-  const ratesRef = React.useRef<{ [item: string]: number }>({});
+  const ratesRef = React.useRef<{ [item: string]: number }>(beginData.rates);
 
   React.useEffect(() => {
-    fetch('https://cdn.cur.su/api/latest.json')
+    //fetch('https://cdn.cur.su/api/latest.json')
+    fetch('https://www.cbr-xml-daily.ru/latest.js')
       .then((res) => res.json())
       .then((data) => {
         ratesRef.current = data.rates;
-        onChangeFromPrice(1);
+        ratesRef.current.RUB = 1;
       })
       .catch((err) => {
         console.warn(err);
-        alert('Не удалось получить информацию с сервера - с сайта https://cdn.cur.su/api');
-      });
+        alert('Не удалось получить информацию с сервера - с сайта https://www.cbr-xml-daily.ru/latest.js. Показаны данные за 2022-11-17');
+      })
+      .finally(() => onChangeFromPrice(1));
   }, []);
 
   const onChangeFromPrice = (value: number) => {
     const result = (value / ratesRef.current[fromCurrency]) * ratesRef.current[toCurrency];
     setFromPrice(value);
-    setToPrice(+result.toFixed(5));
+    setToPrice(+result.toFixed(3));
   };
 
   const onChangeToPrice = (value: number) => {
     const result = (value / ratesRef.current[toCurrency]) * ratesRef.current[fromCurrency];
     setToPrice(value);
-    setFromPrice(+result.toFixed(5));
+    setFromPrice(+result.toFixed(3));
   };
 
   React.useEffect(() => {

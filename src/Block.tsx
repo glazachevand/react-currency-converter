@@ -16,12 +16,7 @@ type BlockProps = {
   onChangeCurrency: (cur: string) => void;
 };
 
-export const Block: React.FC<BlockProps> = ({
-  value,
-  currency,
-  onChangeValue,
-  onChangeCurrency,
-}) => (
+export const Block: React.FC<BlockProps> = ({ value, currency, onChangeValue, onChangeCurrency }) => (
   <div className="block">
     <ul className="currencies">
       {defaultCurrencies.map((cur) => (
@@ -38,7 +33,7 @@ export const Block: React.FC<BlockProps> = ({
       onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeValue(Number(e.target.value))}
       value={String(value)}
       type="number"
-      placeholder={'0'}
+      placeholder={'1'}
     />
   </div>
 );
