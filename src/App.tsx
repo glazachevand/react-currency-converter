@@ -59,11 +59,7 @@ function App() {
 
   React.useEffect(() => {
     onChangeFromPrice(fromPrice);
-  }, [fromCurrency]);
-
-  React.useEffect(() => {
-    onChangeToPrice(toPrice);
-  }, [toCurrency]);
+  }, [toCurrency, fromCurrency]);
 
   return (
     <div className="App">

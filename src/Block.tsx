@@ -28,6 +28,7 @@ export const Block: React.FC<BlockProps> = ({
 }) => {
   const choiseRef = React.useRef<HTMLLIElement>(null);
   const currenciesRef = React.useRef<HTMLLIElement>(null);
+  const tableRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     if (!defaultCurrencies.includes(currency)) {
@@ -40,6 +41,7 @@ export const Block: React.FC<BlockProps> = ({
   React.useEffect(() => {
     if (!open) {
       choiseRef.current?.classList.remove('active');
+      tableRef.current?.classList.remove('active');
     }
   }, [open]);
 
@@ -52,7 +54,11 @@ export const Block: React.FC<BlockProps> = ({
         </div>,
       );
     }
-    return <div className="currencies__table">{arr}</div>;
+    return (
+      <div className="currencies__table" ref={tableRef}>
+        {arr}
+      </div>
+    );
   };
 
   return (
@@ -84,10 +90,11 @@ export const Block: React.FC<BlockProps> = ({
           className="currencies__choice"
           onClick={() => {
             choiseRef.current?.classList.toggle('active');
+            tableRef.current?.classList.toggle('active');
             setOpen((state) => !state);
           }}></li>
       </ul>
-      {open && currenciesTable()}
+      {currenciesTable()}
       <input
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeValue(Number(e.target.value))}
         value={String(value)}
