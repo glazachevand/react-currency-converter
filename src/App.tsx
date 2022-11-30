@@ -1,6 +1,7 @@
 import React from 'react';
 import { Block } from './Block';
 import beginData from './data.json';
+import { DataRates } from './types';
 import './index.scss';
 
 // API: https://www.cbr-xml-daily.ru/latest.js или https://cdn.cur.su/api/latest.json
@@ -15,15 +16,18 @@ function App() {
   const [toPrice, setToPrice] = React.useState(0);
 
   // курсы валют
-  const ratesRef = React.useRef<{ [item: string]: number }>(beginData.rates);
+  let dataRates: DataRates = beginData.rates;
+
+  // открыть окно с выбором валют
+  const [open, setOpen] = React.useState(false);
 
   React.useEffect(() => {
     //fetch('https://cdn.cur.su/api/latest.json')
     fetch('https://www.cbr-xml-daily.ru/latest.js')
       .then((res) => res.json())
       .then((data) => {
-        ratesRef.current = data.rates;
-        ratesRef.current.RUB = 1;
+        dataRates = data.rates;
+        dataRates.RUB = 1;
       })
       .catch((err) => {
         console.warn(err);
@@ -33,15 +37,24 @@ function App() {
   }, []);
 
   const onChangeFromPrice = (value: number) => {
-    const result = (value / ratesRef.current[fromCurrency]) * ratesRef.current[toCurrency];
+    const result = (value / dataRates[fromCurrency]) * dataRates[toCurrency];
     setFromPrice(value);
     setToPrice(+result.toFixed(3));
   };
 
   const onChangeToPrice = (value: number) => {
-    const result = (value / ratesRef.current[toCurrency]) * ratesRef.current[fromCurrency];
+    const result = (value / dataRates[toCurrency]) * dataRates[fromCurrency];
     setToPrice(value);
     setFromPrice(+result.toFixed(3));
+  };
+
+  const onChangeCurrencyTable = (key: string, side: string) => {
+    if (side === 'left') {
+      setFromCurrency(key);
+    } else if (side === 'right') {
+      setToCurrency(key);
+    }
+    setOpen(false);
   };
 
   React.useEffect(() => {
@@ -56,8 +69,30 @@ function App() {
     <div className="App">
       <h1 className="title">Конвертер валют</h1>
       <div className="row">
-        <Block value={fromPrice} currency={fromCurrency} onChangeCurrency={setFromCurrency} onChangeValue={onChangeFromPrice} />
-        <Block value={toPrice} currency={toCurrency} onChangeCurrency={setToCurrency} onChangeValue={onChangeToPrice} />
+        <Block
+          value={fromPrice}
+          currency={fromCurrency}
+          onChangeCurrency={setFromCurrency}
+          onChangeValue={onChangeFromPrice}
+          dataRates={dataRates}
+          onChangeCurrencyTable={onChangeCurrencyTable}
+          side="left"
+          open={open}
+          setOpen={setOpen}
+          key="left"
+        />
+        <Block
+          value={toPrice}
+          currency={toCurrency}
+          onChangeCurrency={setToCurrency}
+          onChangeValue={onChangeToPrice}
+          dataRates={dataRates}
+          onChangeCurrencyTable={onChangeCurrencyTable}
+          side="right"
+          open={open}
+          setOpen={setOpen}
+          key="right"
+        />
       </div>
     </div>
   );

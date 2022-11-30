@@ -1,4 +1,6 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap");
+
+$grey: rgb(229, 229, 229);
 
 * {
   font-family: "Inter", system-ui !important;
@@ -63,13 +65,14 @@ body {
   }
 
   background-color: #fff;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   border-radius: 15px;
 }
 
 .block {
+  position: relative;
   input {
-    padding: 20px 20px;
+    padding: 40px 20px;
     margin-top: 20px;
     width: 100%;
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -93,6 +96,31 @@ body {
   overflow: auto;
   list-style: none;
 
+  &__choice {
+    background: url("../public/arrow-down.svg") no-repeat 50%/12px;
+
+    &.active {
+      background: url("../public/arrow-up-white.svg") no-repeat 50%/12px;
+    }
+  }
+
+  &__table {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    z-index: 10;
+    padding: 10px;
+    height: calc(100% - 50px);
+    overflow: auto;
+    background: #fff;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+  }
+
+  &__item:hover {
+    background-color: $grey;
+  }
+
   li {
     flex: 1;
     padding: 10px 10px;
@@ -103,10 +131,6 @@ body {
     text-align: center;
     border-right: 1px solid rgba(0, 0, 0, 0.2);
     cursor: pointer;
-
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.1);
-    }
 
     &:active {
       background-color: rgba(0, 0, 0, 0.05);
@@ -119,6 +143,10 @@ body {
 
     &:last-of-type {
       border-right: 0;
+    }
+
+    &:hover {
+      background-color: $grey;
     }
   }
 }
