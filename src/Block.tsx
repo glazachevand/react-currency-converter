@@ -1,5 +1,5 @@
 import React from 'react';
-import { TranslationCurrencies, DataRates } from './types';
+import { TranslationCurrencies, DataRates, defaultCurrencies } from './types';
 
 type BlockProps = {
   value: number;
@@ -12,8 +12,6 @@ type BlockProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
-
-const defaultCurrencies = ['RUB', 'USD', 'EUR', 'GBP'];
 
 export const Block: React.FC<BlockProps> = ({
   value,
@@ -45,21 +43,32 @@ export const Block: React.FC<BlockProps> = ({
     }
   }, [open]);
 
-  const currenciesTable = () => {
-    const arr = [];
-    for (const key in dataRates) {
-      arr.push(
-        <div className="currencies__item" key={key} onClick={() => onChangeCurrencyTable(key, side)}>
-          {key} - {TranslationCurrencies[key] ? TranslationCurrencies[key] : key}
-        </div>,
-      );
-    }
-    return (
-      <div className="currencies__table" ref={tableRef}>
-        {arr}
-      </div>
+  React.useEffect(() => {
+    const handleClickOutSide = (event: MouseEvent) => {
+      if (
+        tableRef.current?.classList.contains('active') &&
+        choiseRef.current &&
+        !event.composedPath().includes(tableRef.current) &&
+        !event.composedPath().includes(choiseRef.current)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    document.body.addEventListener('click', handleClickOutSide);
+
+    return () => document.body.removeEventListener('click', handleClickOutSide);
+  }, []);
+
+  const currenciesTable = [];
+
+  for (const key in dataRates) {
+    currenciesTable.push(
+      <div className="currencies__item" key={key} onClick={() => onChangeCurrencyTable(key, side)}>
+        {key} - {TranslationCurrencies[key] ? TranslationCurrencies[key] : key}
+      </div>,
     );
-  };
+  }
 
   return (
     <div className="block">
@@ -75,15 +84,18 @@ export const Block: React.FC<BlockProps> = ({
         ))}
         <li
           ref={currenciesRef}
-          onClick={() => onChangeCurrency(currenciesRef.current?.textContent || 'BYN')}
+          onClick={(event: React.MouseEvent<HTMLLIElement>) => {
+            const target = event.target as Element;
+            onChangeCurrency(target.innerHTML);
+          }}
           className={currency === currenciesRef.current?.textContent ? 'active' : ''}
           key={'BYN'}
           title={
             currenciesRef.current?.textContent && TranslationCurrencies[currenciesRef.current.textContent]
               ? TranslationCurrencies[currenciesRef.current.textContent]
-              : 'BYN'
+              : ''
           }>
-          {'BYN'}
+          {currenciesRef.current?.textContent || 'BYN'}
         </li>
         <li
           ref={choiseRef}
@@ -94,9 +106,11 @@ export const Block: React.FC<BlockProps> = ({
             setOpen((state) => !state);
           }}></li>
       </ul>
-      {currenciesTable()}
+      <div className="currencies__table" ref={tableRef}>
+        {currenciesTable}
+      </div>
       <input
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeValue(Number(e.target.value))}
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) => onChangeValue(Number(event.target.value))}
         value={String(value)}
         type="number"
         placeholder={'1'}

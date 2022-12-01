@@ -62,7 +62,7 @@ function App() {
   }, [toCurrency, fromCurrency]);
 
   return (
-    <div className="App">
+    <div className="app">
       <h1 className="title">Конвертер валют</h1>
       <div className="row">
         <Block

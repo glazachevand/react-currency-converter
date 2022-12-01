@@ -43,3 +43,5 @@ export const TranslationCurrencies: DataTranslationCurrencies = {
   KRW: 'Вон Республики Корея',
   JPY: 'Японская иена',
 };
+
+export const defaultCurrencies = ['RUB', 'USD', 'EUR', 'GBP'];
