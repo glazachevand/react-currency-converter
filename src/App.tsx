@@ -36,17 +36,23 @@ function App() {
       .finally(() => onChangeFromPrice(1));
   }, []);
 
-  const onChangeFromPrice = (value: number) => {
-    const result = (value / dataRates[fromCurrency]) * dataRates[toCurrency];
-    setFromPrice(value);
-    setToPrice(+result.toFixed(3));
-  };
+  const onChangeFromPrice = React.useCallback(
+    (value: number) => {
+      const result = (value / dataRates[fromCurrency]) * dataRates[toCurrency];
+      setFromPrice(value);
+      setToPrice(+result.toFixed(3));
+    },
+    [fromCurrency, toCurrency],
+  );
 
-  const onChangeToPrice = (value: number) => {
-    const result = (value / dataRates[toCurrency]) * dataRates[fromCurrency];
-    setToPrice(value);
-    setFromPrice(+result.toFixed(3));
-  };
+  const onChangeToPrice = React.useCallback(
+    (value: number) => {
+      const result = (value / dataRates[toCurrency]) * dataRates[fromCurrency];
+      setToPrice(value);
+      setFromPrice(+result.toFixed(3));
+    },
+    [fromCurrency, toCurrency],
+  );
 
   const onChangeCurrencyTable = (key: string, side: string) => {
     if (side === 'left') {

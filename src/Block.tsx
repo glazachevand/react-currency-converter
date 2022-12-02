@@ -60,15 +60,23 @@ export const Block: React.FC<BlockProps> = ({
     return () => document.body.removeEventListener('click', handleClickOutSide);
   }, []);
 
-  const currenciesTable = [];
+  const currenciesTable = React.useMemo(() => {
+    let arr = [];
 
-  for (const key in dataRates) {
-    currenciesTable.push(
-      <div className="currencies__item" key={key} onClick={() => onChangeCurrencyTable(key, side)}>
-        {key} - {TranslationCurrencies[key] ? TranslationCurrencies[key] : key}
-      </div>,
+    for (const key in dataRates) {
+      arr.push(
+        <div className="currencies__item" key={key} onClick={() => onChangeCurrencyTable(key, side)}>
+          {key} - {TranslationCurrencies[key] ? TranslationCurrencies[key] : key}
+        </div>,
+      );
+    }
+
+    return (
+      <div className="currencies__table" ref={tableRef}>
+        {arr}
+      </div>
     );
-  }
+  }, []);
 
   return (
     <div className="block">
@@ -106,9 +114,7 @@ export const Block: React.FC<BlockProps> = ({
             setOpen((state) => !state);
           }}></li>
       </ul>
-      <div className="currencies__table" ref={tableRef}>
-        {currenciesTable}
-      </div>
+      {currenciesTable}
       <input
         onChange={(event: React.ChangeEvent<HTMLInputElement>) => onChangeValue(Number(event.target.value))}
         value={String(value)}
