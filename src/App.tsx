@@ -16,7 +16,7 @@ function App() {
   const [toPrice, setToPrice] = React.useState(0);
 
   // курсы валют
-  let dataRates: DataRates = beginData.rates;
+  let dataRates = React.useRef<DataRates>(beginData.rates);
 
   // открыть окно с выбором валют
   const [open, setOpen] = React.useState(false);
@@ -26,19 +26,21 @@ function App() {
     fetch('https://www.cbr-xml-daily.ru/latest.js')
       .then((res) => res.json())
       .then((data) => {
-        dataRates = data.rates;
-        dataRates.RUB = 1;
+        dataRates.current = data.rates;
+        dataRates.current.RUB = 1;
       })
       .catch((err) => {
         console.warn(err);
-        alert('Не удалось получить информацию с сервера - с сайта https://www.cbr-xml-daily.ru/latest.js. Показаны данные за 2022-11-17');
+        alert(
+          'Не удалось получить информацию с сервера - с сайта https://www.cbr-xml-daily.ru/latest.js. Показаны данные за 2022-11-17',
+        );
       })
       .finally(() => onChangeFromPrice(1));
   }, []);
 
   const onChangeFromPrice = React.useCallback(
     (value: number) => {
-      const result = (value / dataRates[fromCurrency]) * dataRates[toCurrency];
+      const result = (value / dataRates.current[fromCurrency]) * dataRates.current[toCurrency];
       setFromPrice(value);
       setToPrice(+result.toFixed(3));
     },
@@ -47,7 +49,7 @@ function App() {
 
   const onChangeToPrice = React.useCallback(
     (value: number) => {
-      const result = (value / dataRates[toCurrency]) * dataRates[fromCurrency];
+      const result = (value / dataRates.current[toCurrency]) * dataRates.current[fromCurrency];
       setToPrice(value);
       setFromPrice(+result.toFixed(3));
     },
@@ -76,7 +78,7 @@ function App() {
           currency={fromCurrency}
           onChangeCurrency={setFromCurrency}
           onChangeValue={onChangeFromPrice}
-          dataRates={dataRates}
+          dataRates={dataRates.current}
           onChangeCurrencyTable={onChangeCurrencyTable}
           side="left"
           open={open}
@@ -88,7 +90,7 @@ function App() {
           currency={toCurrency}
           onChangeCurrency={setToCurrency}
           onChangeValue={onChangeToPrice}
-          dataRates={dataRates}
+          dataRates={dataRates.current}
           onChangeCurrencyTable={onChangeCurrencyTable}
           side="right"
           open={open}
